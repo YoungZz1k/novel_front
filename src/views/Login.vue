@@ -5,7 +5,7 @@
     <div class="userBox cf">
       <div class="user_l">
         <form method="post" action="./login.html" id="form1">
-          <h3>登录小说精品屋</h3>
+          <h3>登录风云小说</h3>
           <ul class="log_list">
             <li><span id="LabErr"></span></li>
             <li>
@@ -132,7 +132,7 @@ export default {
         ElMessage.error("密码不能为空！");
         return;
       }
-      
+
       const { data } = await login(state);
 
       setToken(data.token);

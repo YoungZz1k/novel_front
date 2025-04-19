@@ -3,7 +3,7 @@
     <dd style="text-align: left" v-for="(item, index) in newsList" :key="index">
       <span>[{{ item.categoryName }}]</span>
       <a href="javascript:void(0)" @click="newsInfo(item.id)"> {{ item.title }}</a>
-      
+
     </dd>
   </dl>
 </template>
