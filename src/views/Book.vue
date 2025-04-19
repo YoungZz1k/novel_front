@@ -431,6 +431,11 @@ export default {
     };
 
     const userComment = async () => {
+      if (!state.uid) {
+        ElMessage.error("请先登录！");
+        router.push("/login");
+        return;
+      }
       if (!state.commentContent) {
         ElMessage.error("用户评论不能为空！");
         return;
