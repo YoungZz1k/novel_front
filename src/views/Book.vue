@@ -338,9 +338,9 @@ import {
   addVisitCount,
   getLastChapterAbout,
   listRecBooks,
-  listNewestComments,
+  listNewestComments, getBookContent,
 } from "@/api/book";
-import { comment, deleteComment, updateComment } from "@/api/user";
+import { comment, deleteComment, updateComment, getReadHistory, saveReadHistory } from "@/api/user";
 import { getUid } from "@/utils/auth";
 import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
@@ -371,6 +371,7 @@ export default {
     });
     onMounted(() => {
       const bookId = route.params.id;
+      const chapterId = route.params.chapterId;
       loadBook(bookId);
       loadRecBooks(bookId);
       loadLastChapterAbout(bookId);
@@ -385,6 +386,25 @@ export default {
           .setAttribute("onerror", "this.src='default.gif';this.onerror=null");
       }
     });
+
+
+    // 保存阅读历史
+    const saveHistory = async (chapterId) => {
+      const { data } = await getBookContent(chapterId);
+      state.data = data;
+
+      // 新增阅读历史保存逻辑
+      if(getUid()) {
+        try {
+          await saveReadHistory({
+            bookId: state.data.chapterInfo.bookId,
+            preContentId: chapterId
+          });
+        } catch (error) {
+          console.error('保存阅读历史失败', error);
+        }
+      }
+    };
 
     const loadBook = async (bookId) => {
       const { data } = await getBookById(bookId);
@@ -405,8 +425,23 @@ export default {
       state.chapterAbout = data;
     };
 
-    const bookContent = (bookId, chapterId) => {
-      router.push({ path: `/book/${bookId}/${chapterId}` });
+    // const bookContent = (bookId, chapterId) => {
+    //   router.push({ path: `/book/${bookId}/${chapterId}` });
+    // };
+
+    const bookContent = async (bookId, defaultChapterId) => { // 添加async关键字
+      console.log("正在请求阅读历史，bookId:", bookId);
+      try {
+        const { data } = await getReadHistory(bookId);
+        const targetChapterId = data != null ? data?.preContentId : defaultChapterId;
+        route.params.chapterId = data != null ? data?.preContentId : defaultChapterId;
+        console.log("获取到的阅读历史:", targetChapterId)
+        saveHistory(targetChapterId);
+        router.push({ path: `/book/${bookId}/${targetChapterId}` });
+      } catch (error) {
+        console.error("获取阅读历史失败", error);
+        router.push({ path: `/book/${bookId}/${defaultChapterId}` });
+      }
     };
 
     const bookDetail = (bookId) => {

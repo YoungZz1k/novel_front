@@ -35,3 +35,11 @@ export function updateUserInfo(userInfo) {
 export function listComments(params) {
     return request.get('/front/user/comments', { params });
 }
+
+export function getReadHistory(bookId) {
+    return request.get(`/front/user/readHistory/${bookId}`);
+}
+
+export function saveReadHistory(data) {
+    return request.post('/front/user/saveReadHistory', data);
+}

@@ -268,6 +268,8 @@ import { getBookContent, getPreChapterId, getNextChapterId } from "@/api/book";
 import { ElMessage } from "element-plus";
 import Top from "@/components/common/Top";
 import Footer from "@/components/common/Footer";
+import {saveReadHistory} from "@/api/user";
+import {getUid} from "@/utils/auth";
 export default {
   name: "bookContent",
   components: {
@@ -318,6 +320,18 @@ export default {
     const preChapter = async (bookId) => {
       const { data } = await getPreChapterId(route.params.chapterId);
       if (data) {
+        // 保存阅读历史
+        // 新增阅读历史保存逻辑
+        if(getUid()) {
+          try {
+            await saveReadHistory({
+              bookId: bookId,
+              preContentId: data
+            });
+          } catch (error) {
+            console.error('保存阅读历史失败', error);
+          }
+        }
         router.push({ path: `/book/${bookId}/${data}` });
         init(data);
       } else {
@@ -328,6 +342,16 @@ export default {
     const nextChapter = async (bookId) => {
       const { data } = await getNextChapterId(route.params.chapterId);
       if (data) {
+        if(getUid()) {
+          try {
+            await saveReadHistory({
+              bookId: bookId,
+              preContentId: data
+            });
+          } catch (error) {
+            console.error('保存阅读历史失败', error);
+          }
+        }
         router.push({ path: `/book/${bookId}/${data}` });
         init(data);
       } else {
