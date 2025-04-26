@@ -5,8 +5,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, onMounted } from "vue";
-import { listHomeFriendLinks } from "@/api/home";
+import { reactive, toRefs } from "vue";
 export default {
   name: "FriendLink",
   setup() {
@@ -14,10 +13,17 @@ export default {
       friendLinks: [],
     });
 
-    onMounted(async () => {
-      const { data } = await listHomeFriendLinks();
-      state.friendLinks = data;
-    });
+    // onMounted(async () => {
+    //   try {
+    //     const res = await listHomeFriendLinks();
+    //     // 确保响应包含data字段
+    //     if(res && res.data) {
+    //       state.friendLinks = res.data;
+    //     }
+    //   } catch (error) {
+    //     console.error("获取友链失败:", error);
+    //   }
+    // });
 
     return {
       ...toRefs(state),
